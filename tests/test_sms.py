@@ -1,10 +1,10 @@
 #!.env/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 import time
 import requests
 import csv
+from config import basedir
 
 
 def make_call(sms_number):
@@ -63,8 +63,7 @@ def main():
     :return:
     """
 
-    filepath = os.getcwd().replace('/tests', '')
-    filepath = filepath + '/assets/data/home_phone__email.csv'
+    filepath = basedir + '/assets/data/home_phone__email.csv'
 
     try:
         print('Successfully tested {} records'.format(str(read_file(filepath))))

@@ -457,6 +457,131 @@ def get_sms_data(phone_number):
         return Response(data, status=400, mimetype='application/json')
 
 
+@app.route('/api/v1.0/lat/<string:lat>/lng/<string:lng>', methods=['GET'])
+def get_location_data(lat, lng):
+    """
+    Append data to latitude and longitude
+    Return the Person obj by latitude and longitude
+    :param: string: lat (float), lng (float)
+    :return: obj(Person), type(json)
+    """
+
+    persons = []
+
+    try:
+        lat = float(lat)
+        lng = float(lng)
+
+        try:
+            location = db_session.query(IPData).filter(
+                IPData.latitude == lat,
+                IPData.longitude == lng
+            ).all()
+
+            if location:
+
+                for rec in location:
+                    persons.append(rec)
+
+                resp = {"Data found for location": persons}
+                data = json.dumps(resp, default=convert_datetime_object)
+                return Response(data, status=200, mimetype='application/json')
+
+            else:
+                resp = {"No data matching": "Lat: {} Lng: {}".format(str(lat), str(lng))}
+                data = json.dumps(resp)
+                return Response(data, status=200, mimetype='application/json')
+
+        except exc.SQLAlchemyError as err:
+            resp = {"Database Error": str(err)}
+            data = json.dump(resp)
+            return Response(data, status=500, mimetype='application/json')
+
+    except TypeError as type_err:
+        resp = {"Error": str(type_err)}
+        data = json.dumps(resp)
+        return Response(data, status=400, mimetype='application/json')
+
+
+@app.route('/api/v1.0/first/<string:f_name>/last/<string:l_name>', methods=['GET'])
+def get_name_data(f_name, l_name):
+    """
+    Append data to Person first_name and last_name
+    Return the Person obj by first name and last name
+    :param: string: f_name (string), l_name (string>
+    :return: obj(Person), type(json)
+    """
+
+    try:
+        first = str(f_name)
+        last = str(l_name)
+
+        try:
+            data = db_session.query(IPData).filter(
+                IPData.first_name == first,
+                IPData.last_name == last
+            ).first()
+
+            if data:
+                # return a successful response
+                return jsonify({
+                    'created_date': data.created_date,
+                    'last_seen': data.last_seen,
+                    'ip': data.ip,
+                    'person': {
+                        'first_name': data.first_name,
+                        'last_name': data.last_name,
+                        'address1': data.address1,
+                        'address2': data.address2,
+                        'city': data.city,
+                        'state': data.state.upper(),
+                        'zip_code': data.zip_code,
+                        'home_phone': data.home_phone,
+                        'cell_phone': data.cell_phone,
+                        'birth_year': data.birth_year,
+                        'credit_range': data.credit_range,
+                        'income_range': data.income_range,
+                        'home_owner_renter': data.home_owner_renter
+                    },
+                    'geo': {
+                        'latitude': data.latitude,
+                        'longitude': data.longitude,
+                        'time_zone': data.time_zone,
+                        'metro_code': data.metro_code,
+                        'country_name': data.country_name,
+                        'country_code': data.country_code,
+                        'country_code3': data.country_code3,
+                        'dma_code': data.dma_code,
+                        'area_code': data.area_code,
+                        'region': data.region,
+                        'region_name': data.region_name
+                    },
+                    'auto': {
+                        'car_year': data.car_year,
+                        'car_make': data.car_make,
+                        'car_model': data.car_model,
+                        'ppm_type': data.ppm_type,
+                        'ppm_indicator': data.ppm_indicator,
+                        'ppm_segment': data.ppm_segment,
+                        'auto_trans_date': data.auto_trans_date,
+                        'auto_purchase_type': data.auto_purchase_type
+                    }
+                }), 200
+
+            else:
+                resp = {"No data found": str(f_name) + ' ' + str(l_name)}
+                data = json.dumps(resp)
+                return Response(data, status=200, mimetype='application/json')
+
+        except exc.SQLAlchemyError as db_err:
+            resp = {"Database Error": str(db_err)}
+            data = json.dumps(resp, default=convert_datetime_object)
+            return Response(data, status=500, mimetype='application/json')
+
+    except TypeError as e:
+        return Response(e, status=400, mimetype='application/json')
+
+
 '''
 ******************************
 ***** Utility Functions *****
@@ -505,6 +630,11 @@ def geocode_phone_number(phone_number):
         resp['error'] = '{}'.format(str(npe))
 
     return resp
+
+
+def convert_datetime_object(o):
+    if isinstance(o, datetime):
+        return o.__str__()
 
 
 def get_date():
