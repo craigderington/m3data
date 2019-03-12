@@ -84,7 +84,7 @@ class IPData(Base):
     dma_code = Column(String(3))
     area_code = Column(String(3))
     geo_city = Column(String(255))
-    postal_code = Column(String(5))
+    postal_code = Column(String(50))
     region = Column(String(50))
     region_name = Column(String(255))
     credit_range = Column(String(50))

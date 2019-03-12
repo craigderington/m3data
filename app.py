@@ -122,14 +122,26 @@ def multiply():
 @app.route('/', methods=['GET'])
 def home():
     """
-    M3 Homepage
+    Marketing Data Intelligence Homepage
     :return: template
     """
 
     return render_template(
         'home.html',
-        today=get_date(),
-        title=''
+        today=get_date()
+    )
+
+
+@app.route('/markets', methods=['GET'])
+def markets():
+    """
+    MDI Markets
+    :return: template
+    """
+
+    return render_template(
+        'markets.html',
+        today=get_date()
     )
 
 
@@ -142,8 +154,7 @@ def appending():
 
     return render_template(
         'appending.html',
-        today=get_date(),
-        title=''
+        today=get_date()
     )
 
 
@@ -156,8 +167,7 @@ def sms():
 
     return render_template(
         'sms.html',
-        today=get_date(),
-        title=''
+        today=get_date()
     )
 
 
@@ -170,8 +180,7 @@ def pricing():
 
     return render_template(
         'pricing.html',
-        today=get_date(),
-        title=''
+        today=get_date()
     )
 
 
@@ -184,8 +193,7 @@ def api_docs():
 
     return render_template(
         'api_docs.html',
-        today=get_date(),
-        title=''
+        today=get_date()
     )
 
 
@@ -198,8 +206,7 @@ def contact():
 
     return render_template(
         'contact.html',
-        today=get_date(),
-        title=''
+        today=get_date()
     )
 
 
@@ -211,8 +218,31 @@ def login():
     """
     return render_template(
         'login.html',
-        today=get_date(),
-        title='M3 Login'
+        today=get_date()
+    )
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """
+    Template for Login page
+    :return:
+    """
+    return render_template(
+        'register.html',
+        today=get_date()
+    )
+
+
+@app.route('/status', methods=['GET'])
+def status():
+    """
+    Template for Status page
+    :return:
+    """
+    return render_template(
+        'status.html',
+        today=get_date()
     )
 
 

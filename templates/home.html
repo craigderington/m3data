@@ -1,0 +1,109 @@
+{% extends "_layout.html" %}
+
+{% block body %}
+    <div class="jumbotron">
+        <h1 class="display-3"><i class="fa fa-angle-double-right" style="color:#375A7F;"></i> Marketing Data Intelligence</h1>
+        <h3 class="display-5">Real Time Consumer Data Appending API</h3>
+        <p>Validate and append consumer data by IP Address, Email, Phone Number, Name and more...</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('appending') }}" role="button"><i class="fa fa-th-list"></i> Learn more</a>
+            <a class="btn btn-info btn-lg" href="{{ url_for('register') }}" role="button"><i class="fa fa-check-circle"></i> Sign Up</a>
+        </p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card border-dark mb-3">
+                <div class="card-header"><i class="fa fa-database"></i> IP Data Appending</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Real Time IP Data</h4>
+                        <p class="card-text">This is the rest of the detail for this section.</p>
+                    </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-dark mb-3">
+                <div class="card-header"><i class="fa fa-mobile"></i> SMS Appending</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Verify Phone Numbers</h4>
+                        <p class="card-text">This is the rest of the detail for this section.</p>
+                    </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-dark mb-3">
+                <div class="card-header"><i class="fa fa-envelope"></i> Email Address Verification</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Verify email address deliverability</h4>
+                        <p class="card-text">This is the rest of the detail for this section.</p>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card border-dark mb-3">
+                <div class="card-header"><i class="fa fa-code"></i> Easy to Use API</div>
+                <div class="card-body">
+                    <h4 class="card-title">Swagger REST API Docs</h4>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-dark mb-3">
+                <div class="card-header"><i class="fa fa-money"></i> Simple Pricing</div>
+                <div class="card-body">
+                    <h4 class="card-title">Only pay for what you append...</h4>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-dark mb-3">
+                <div class="card-header"><i class="fa fa-users"></i> Dedicated Support</div>
+                <div class="card-body">
+                    <h4 class="card-title">We're here for you!</h4>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--- begin: network status -->
+    <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1"><i class="fa fa-globe"></i> Network Status</h5>
+                <small>1 minute ago</small>
+            </div>
+            <p class="mb-1">All systems are operating normally...</p>
+            <small>Next check in 1 minute.</small>
+        </a>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+
+    <footer id="footer">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul class="list-unstyled">
+                    <li class="float-lg-right"><a href="#top">Back to top</a></li>
+                    <li><a href="{{ url_for('markets') }}">Markets</a></li>
+                    <li><a href="{{ url_for('appending') }}">Data Sets</a></li>
+                    <li><a href="{{ url_for('pricing') }}">Pricing</a></li>
+                    <li><a href="{{ url_for('status') }}">Status</a></li>
+                    <li><a href="{{ url_for('api_docs') }}">API</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                </ul>
+                <p>&copy; 2019 &raquo; MDI, Marketing Data Intelligence & Analytics.  All Rights Reserved. </p>
+                <p>Powered by <i class="fa fa-flask"></i> and Python</p>
+                <p>Code released under the <a href="">Apache License</a>.</p>
+
+            </div>
+        </div>
+    </footer>
+
+{% endblock %}
