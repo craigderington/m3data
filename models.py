@@ -16,7 +16,7 @@ class User(Base):
     username = Column(String(64), unique=True, nullable=False, index=True)
     password = Column(String(256), nullable=False)
     active = Column(Boolean, default=1)
-    email = Column(String(120), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=True)
     last_login = Column(DateTime)
     login_count = Column(Integer)
     fail_login_count = Column(Integer)
@@ -25,10 +25,14 @@ class User(Base):
     created_by_fk = Column(Integer)
     changed_by_fk = Column(Integer)
     api_key = Column(String(255))
+    token = Column(String(1024), nullable=True, unique=True)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, first_name, last_name, email):
         self.username = username
         self.set_password(password)
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
         self.api_key = uuid.uuid4()
 
     def is_authenticated(self):

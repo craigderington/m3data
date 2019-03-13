@@ -26,7 +26,7 @@ debug = config.DEBUG
 
 # app config
 app = Flask(__name__)
-sslify = SSLify(app)
+# sslify = SSLify(app)
 app.config['SECRET_KEY'] = config.SECRET_KEY
 token_serializer = Serializer(app.config['SECRET_KEY'], expires_in=3600)
 
@@ -621,11 +621,26 @@ def get_name_data(f_name, l_name):
 
 @app.before_first_request
 def create_user_tokens():
-    # set up test users and token auth
-    users = ['craigderington', 'jamescraig', 'customer_x']
-    for user in users:
-        token = token_serializer.dumps({'username': user}).decode('utf-8')
-        print('*** token for {}: {}\n'.format(user, token))
+    # write the user tokens to the appropriate db fields
+    counter = 0
+
+    try:
+        users = db_session.query(User).filter(
+            User.active == 1
+        ).all()
+
+        for user in users:
+            token = token_serializer.dumps({'username': user.username}).decode('utf-8')
+            user.token = token
+            db_session.commit()
+            db_session.flush()
+            print('*** token for {} ***: {}\n'.format(user.username, token))
+            counter += 1
+
+        print('Updated {} tokens.'.format(str(counter)))
+
+    except exc.SQLAlchemyError as err:
+        print('Database error updating tokens: {}'.format(str(err)))
 
 
 def check_phone_number(phone_number):
