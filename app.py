@@ -8,7 +8,7 @@ from sqlalchemy import exc, and_, desc
 from celery import Celery
 from datetime import datetime
 from db import db_session
-from models import User, IPData
+from models import User, IPData, APILog
 from twilio.rest import Client
 import config
 import json
@@ -75,6 +75,7 @@ def verify_token(token):
         return False
     if 'username' in data:
         g.user = data['username']
+        g.user_id = data['user_id']
         return True
     return False
 
@@ -256,7 +257,7 @@ def status():
 @app.route('/api', methods=['GET'])
 @app.route('/api/v1.0', methods=['GET'])
 @app.route('/api/v1.0/index', methods=['GET'])
-# @auth.login_required
+@auth.login_required
 def index():
     """
     The default API view.  List routes:
@@ -282,6 +283,7 @@ def index():
 
 
 @app.route('/api/v1.0/ipaddr/<string:ip_addr>', methods=['GET'])
+@auth.login_required
 def get_ip_data(ip_addr):
     """
     Append data to IP Address
@@ -298,6 +300,12 @@ def get_ip_data(ip_addr):
                 data = db_session.query(IPData).filter(IPData.ip == ip_address).first()
 
                 if data:
+
+                    # write the access log
+                    try:
+                        write_log(g.user_id, 'ipdata')
+                    except Exception as e:
+                        print('Error writing log...')
 
                     # return a successful response
                     return jsonify({
@@ -382,6 +390,7 @@ def get_ip_data(ip_addr):
 
 
 @app.route('/api/v1.0/sms/<string:phone_number>', methods=['GET'])
+@auth.login_required
 def get_sms_data(phone_number):
     """
     Append data to Mobile Number
@@ -410,6 +419,12 @@ def get_sms_data(phone_number):
                 ).first()
 
                 if data:
+
+                    # write the access log
+                    try:
+                        write_log(g.user_id, 'sms')
+                    except Exception as e:
+                        print('Error writing log...')
 
                     # return a successful response
                     return jsonify({
@@ -488,6 +503,7 @@ def get_sms_data(phone_number):
 
 
 @app.route('/api/v1.0/lat/<string:lat>/lng/<string:lng>', methods=['GET'])
+@auth.login_required
 def get_location_data(lat, lng):
     """
     Append data to latitude and longitude
@@ -534,6 +550,7 @@ def get_location_data(lat, lng):
 
 
 @app.route('/api/v1.0/first/<string:f_name>/last/<string:l_name>', methods=['GET'])
+@auth.login_required
 def get_name_data(f_name, l_name):
     """
     Append data to Person first_name and last_name
@@ -630,8 +647,9 @@ def create_user_tokens():
         ).all()
 
         for user in users:
-            token = token_serializer.dumps({'username': user.username}).decode('utf-8')
+            token = token_serializer.dumps({'username': user.username, 'user_id': user.id}).decode('utf-8')
             user.token = token
+            user.token_last_update = datetime.now()
             db_session.commit()
             db_session.flush()
             print('*** token for {} ***: {}\n'.format(user.username, token))
@@ -641,6 +659,41 @@ def create_user_tokens():
 
     except exc.SQLAlchemyError as err:
         print('Database error updating tokens: {}'.format(str(err)))
+
+
+def write_log(user_id, resource):
+    """
+    Write the resource user access log to
+    the database table for analytics and reporting
+    :param user_id:
+    :param resource:
+    :return: none
+    """
+    id = None
+    res = None
+
+    try:
+        id = int(user_id)
+        res = str(resource)
+
+        try:
+            _log = APILog(
+                user_id=id,
+                resource=res
+            )
+
+            db_session.add(_log)
+            db_session.commit()
+            db_session.flush()
+            print('Log write for: {} on: {}'.format(str(id), res))
+
+        except exc.SQLAlchemyError as db_err:
+            print('Error writing access log data: {}'.format(str(db_err)))
+
+    except TypeError as error:
+        print('Invalid data type {} in write_log function.'.format(str(error)))
+
+    return id, res
 
 
 def check_phone_number(phone_number):
