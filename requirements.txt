@@ -23,7 +23,7 @@ flask-swagger==0.2.13
 idna==2.8
 ipaddress==1.0.22
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 kombu==4.3.0
 MarkupSafe==1.1.0
 marshmallow==2.18.1
